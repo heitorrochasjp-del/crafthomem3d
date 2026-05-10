@@ -29,16 +29,15 @@ jobs:
     - name: Create web assets directory
       run: |
         mkdir -p www
-        # Procura o index.html em qualquer lugar e copia para www/
-        find . -name "index.html" -exec cp {} www/ \;
-        # Se não achou, cria um index.html padrão com seu jogo
+        find . -name "*.html" -exec cp {} www/ \;
         if [ ! -f www/index.html ]; then
-          echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>CraftHomem3D</title><style>body{margin:0;overflow:hidden;background:#87CEEB;}</style></head><body>Arquivo HTML não encontrado. Coloque seu jogo aqui.</body></html>' > www/index.html
+          cp CraftHomem3D_FIXED.html www/index.html 2>/dev/null || echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>CraftHomem3D</title><style>body{margin:0;overflow:hidden;background:#87CEEB;}</style></head><body><h1>CraftHomem3D</h1><p>Jogo carregando...</p></body></html>' > www/index.html
         fi
     
-    - name: Install Capacitor
+    - name: Install Capacitor and TypeScript
       run: |
         npm init -y
+        npm install -D typescript
         npm install @capacitor/core @capacitor/cli @capacitor/android
     
     - name: Initialize Capacitor
