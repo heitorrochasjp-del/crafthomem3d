@@ -23,20 +23,32 @@ jobs:
       with:
         node-version: '22'
     
-    - name: Install dependencies
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+    
+    - name: Create web assets directory
       run: |
-        npm install
-        npm install -D typescript
-        npm install @capacitor/android
+        mkdir -p www
+        # Procura o index.html em qualquer lugar e copia para www/
+        find . -name "index.html" -exec cp {} www/ \;
+        # Se não achou, cria um index.html padrão com seu jogo
+        if [ ! -f www/index.html ]; then
+          echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>CraftHomem3D</title><style>body{margin:0;overflow:hidden;background:#87CEEB;}</style></head><body>Arquivo HTML não encontrado. Coloque seu jogo aqui.</body></html>' > www/index.html
+        fi
+    
+    - name: Install Capacitor
+      run: |
+        npm init -y
+        npm install @capacitor/core @capacitor/cli @capacitor/android
+    
+    - name: Initialize Capacitor
+      run: npx cap init CraftHomem3D com.crafthomem.game --web-dir=www
     
     - name: Add Android platform
       run: npx cap add android
     
     - name: Sync Capacitor
       run: npx cap sync android
-    
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
     
     - name: Build APK
       run: |
